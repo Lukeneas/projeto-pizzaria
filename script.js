@@ -8,6 +8,7 @@ let modalQt = 1;
 const c = (el) => document.querySelector(el);
 const cs = (el) => document.querySelectorAll(el);
 
+//LISTAGEM DAS PIZZAS ABERTAS OU CLICADAS
 pizzaJson.map((pizza, index) => {
   //clones dos modelos html
   let pizzaItem = c(".models .pizza-item").cloneNode(true);
@@ -28,24 +29,25 @@ pizzaJson.map((pizza, index) => {
     //closest procura el mais proximo com essa class
     let key = e.target.closest(".pizza-item").getAttribute("data-key");
 
+    //INSERÇÃO HTML
     c(".pizzaBig img").src = pizzaJson[key].img;
     c(".pizzaInfo h1").innerHTML = pizzaJson[key].name;
     c(".pizzaInfo--desc").innerHTML = pizzaJson[key].description;
     c(".pizzaInfo--actualPrice").innerHTML = pizzaJson[key].price.toFixed(2);
+    //SIZES
     //REMOVE PRE-SELECTED caso a pessoa clique em um tamanho e pule para outra pizza
-    c('.pizzaInfo--size.selected').classList.remove('selected');
+    c(".pizzaInfo--size.selected").classList.remove("selected");
     cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
       //sempre que abrir uma pizza, grande será o tamanho PRE-SELECTED
-      if(sizeIndex == 2) {
-        size.classList.add('selected');
-      };
+      if (sizeIndex == 2) {
+        size.classList.add("selected");
+      }
       //pizza clicada //medidas //cada medida jogada dentro de span conectando sizeIndex(n sizes), consequentemente jogando em n spans que estao dentro das sizes
-      size.querySelector('span').innerHTML = 
-      pizzaJson[key].sizes[sizeIndex];;
+      size.querySelector("span").innerHTML = pizzaJson[key].sizes[sizeIndex];
     });
 
     //quantidade pizza
-    c('.pizzaInfo--qt').innerHTML = modalQt;
+    c(".pizzaInfo--qt").innerHTML = modalQt;
     //animação modal
     c(".pizzaWindowArea").style.opacity = 0;
     c(".pizzaWindowArea").style.display = "flex";
@@ -56,3 +58,12 @@ pizzaJson.map((pizza, index) => {
   //append add models de pizza sem remover content de pizza-area
   c(".pizza-area").append(pizzaItem);
 });
+
+//EVENTOS DO MODAL
+const closeModal = () => {
+  c(".pizzaWindowArea").style.opacity = 0;
+  setTimeout(()=>{
+    c(".pizzaWindowArea").style.display = 'none';
+  },500)
+};
+cs('.pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton').forEach((button)=>button.addEventListener('click',closeModal))
