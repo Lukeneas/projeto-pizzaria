@@ -21,6 +21,7 @@ pizzaJson.map((pizza, index) => {
     ".pizza-item--price"
   ).innerHTML = `R$ ${pizza.price.toFixed(2)}`; //2 alg depois da virgula, caso nao tenha centavos
   pizzaItem.querySelector(".pizza-item--desc").innerHTML = pizza.description;
+
   //evento de pizza clicada
   pizzaItem.querySelector("a").addEventListener("click", (e) => {
     e.preventDefault();
@@ -29,7 +30,7 @@ pizzaJson.map((pizza, index) => {
     //closest procura el mais proximo com essa class
     let key = e.target.closest(".pizza-item").getAttribute("data-key");
 
-    //INSERÇÃO HTML
+    //INSERÇÃO HTML MODAL
     c(".pizzaBig img").src = pizzaJson[key].img;
     c(".pizzaInfo h1").innerHTML = pizzaJson[key].name;
     c(".pizzaInfo--desc").innerHTML = pizzaJson[key].description;
@@ -48,6 +49,7 @@ pizzaJson.map((pizza, index) => {
 
     //quantidade pizza
     c(".pizzaInfo--qt").innerHTML = modalQt;
+
     //animação modal
     c(".pizzaWindowArea").style.opacity = 0;
     c(".pizzaWindowArea").style.display = "flex";
@@ -55,6 +57,7 @@ pizzaJson.map((pizza, index) => {
       c(".pizzaWindowArea").style.opacity = 1;
     }, 200);
   });
+
   //append add models de pizza sem remover content de pizza-area
   c(".pizza-area").append(pizzaItem);
 });
@@ -62,8 +65,27 @@ pizzaJson.map((pizza, index) => {
 //EVENTOS DO MODAL
 const closeModal = () => {
   c(".pizzaWindowArea").style.opacity = 0;
-  setTimeout(()=>{
-    c(".pizzaWindowArea").style.display = 'none';
-  },500)
+  setTimeout(() => {
+    c(".pizzaWindowArea").style.display = "none";
+  }, 500);
 };
-cs('.pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton').forEach((button)=>button.addEventListener('click',closeModal))
+
+cs(".pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton").forEach(
+  (button) => button.addEventListener("click", closeModal)
+);
+c(".pizzaInfo--qtmenos").addEventListener("click", () => {
+  if (modalQt > 1) {
+    modalQt--;
+    c(".pizzaInfo--qt").innerHTML = modalQt;
+  }
+});
+c(".pizzaInfo--qtmais").addEventListener("click", () => {
+  modalQt++;
+  c(".pizzaInfo--qt").innerHTML = modalQt;
+});
+cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
+  size.addEventListener('click',()=>{
+    c(".pizzaInfo--size.selected").classList.remove("selected");
+    size.classList.add('selected');
+  })
+});
