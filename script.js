@@ -97,14 +97,30 @@ cs(".pizzaInfo--size").forEach((size, sizeIndex) => {
 /////carrinho
 c(".pizzaInfo--addButton").addEventListener("click", () => {
   //Qual a pizza? modalKey
-  //Qual o tamanho?
-  let size = parseInt(c(".pizzaInfo--size.selected").getAttribute('data-key'));
+  //Qual o tamanho? size
   //Quantas pizzas? modalQt
+  let size = parseInt(c(".pizzaInfo--size.selected").getAttribute("data-key"));
+
+  //caso id e size já estejam em cart, não deve 'criar outro objeto'
+  let identifier = pizzaJson[modalKey].id + "@" + size;
+  let key = cart.findIndex(
+    (item) =>
+      //verifica quais IDENTIFIERCART são iguais ao IDENTIFIERTARGET
+      (item.identifier == identifier)
+    //se achar, RETORNA O INDEX, caso contrário, RETORNA -1
+  );
   //CLICOU PRA ADICIONAR : SALVA INFOS NO CART
-  cart.push({
-    id : pizzaJson[modalKey].id,
-    size,
-    qt : modalQt
-  })
+  if (key > -1) {
+    //quantidade do item no carrinho + quantidade atual
+    cart[key].qt += modalQt;
+  } else {
+    cart.push({
+      identifier,
+      id: pizzaJson[modalKey].id,
+      size,
+      qt: modalQt,
+    });
+  }
   closeModal();
+  console.log(cart);
 });
