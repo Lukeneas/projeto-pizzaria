@@ -106,12 +106,13 @@ c(".pizzaInfo--addButton").addEventListener("click", () => {
   let key = cart.findIndex(
     (item) =>
       //verifica quais IDENTIFIERCART são iguais ao IDENTIFIERTARGET
-      (item.identifier == identifier)
+      item.identifier == identifier
     //se achar, RETORNA O INDEX, caso contrário, RETORNA -1
   );
   //CLICOU PRA ADICIONAR : SALVA INFOS NO CART
+  //SE IDENTIFIER = -1 (MESMA PIZZA E TAMANHO)
   if (key > -1) {
-    //quantidade do item no carrinho + quantidade atual
+    //QUANTIDADE(Q) do ITEM ESPECÍFICO(KEY) no carrinho + quantidade atual
     cart[key].qt += modalQt;
   } else {
     cart.push({
@@ -121,6 +122,84 @@ c(".pizzaInfo--addButton").addEventListener("click", () => {
       qt: modalQt,
     });
   }
+  uptadeCart();
   closeModal();
   console.log(cart);
 });
+
+const uptadeCart = () => {
+  //se TEM ITEM no CARRINHO
+  if (cart.length > 0) {
+    //MOSTRA O CARRINHO
+    c("aside").classList.add("show");
+    //ZERA O CARRINHO(memoria anterior de cart), só joga o CART ATUAL(memoria atual de cart)
+    c(".cart").innerHTML = "";
+
+    //
+    let subtotal = 0;
+    let desconto = 0;
+    let total = 0;
+    //CONEXAO PIZZAJSONID com CARTID
+    for (let i in cart) {
+      let pizzaItem = pizzaJson.find((item) => item.id == cart[i].id);
+      //PIZZAITEM = TODA PIZZAJSON com IDJSON = IDEACHCART
+
+      //
+      subtotal += pizzaItem.price * cart[i].qt;
+
+      //PADRAO HTML CART
+      let cartItem = c(".models .cart--item").cloneNode(true);
+
+      let pizzaSizeName;
+      switch (cart[i].size) {
+        case 0:
+          pizzaSizeName = "P";
+          break;
+        case 1:
+          pizzaSizeName = "M";
+          break;
+        case 2: {
+          pizzaSizeName = "G";
+          break;
+        }
+      }
+
+      //JOGANDO MEMORIA no HTML
+      cartItem.querySelector("img").src = pizzaItem.img;
+      cartItem.querySelector(".cart--item-nome").innerHTML =
+        pizzaItem.name + "" + pizzaSizeName;
+      cartItem.querySelector(".cart--item--qt").innerHTML = cart[i].qt;
+      cartItem
+        .querySelector(".cart--item-qtmenos")
+        .addEventListener("click", () => {
+          //SE TIVER MAIS DE 1 DESSA PIZZA
+          if (cart[i].qt > 1) {
+            //DIMINUA
+            cart[i].qt--;
+          } else {
+            //REMOVA SOMENTE ESTA PIZZA DO CARRINHO
+            cart.splice(i, 1);
+          }
+          uptadeCart();
+        });
+      cartItem
+        .querySelector(".cart--item-qtmais")
+        .addEventListener("click", () => {
+          cart[i].qt++;
+          uptadeCart();
+        });
+
+      //JOGANDO CARTITEM EM SEU ELEMENTO PAI
+      c(".cart").append(cartItem);
+    }
+    desconto = subtotal * 0.1;
+    total = subtotal - desconto;
+
+    c('.subtotal span:last-child').innerHTML = `R$ ${subtotal.toFixed(2)}`;
+    c('.desconto span:last-child').innerHTML = `R$ ${desconto.toFixed(2)}`;
+    c('.total span:last-child').innerHTML = `R$ ${total.toFixed(2)}`;
+  } else {
+    //REMOVA CARRINHO
+    c("aside").classList.remove("show");
+  }
+};
